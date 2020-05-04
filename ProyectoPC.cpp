@@ -33,13 +33,14 @@ struct CeldaSinCalcular
 struct CeldaCalculada
 {
     char *nombre;
-    double *dato;
+    double dato;
 };
 struct EstructuraHoja
 {
     int filas;
     int columnas;
     CeldaSinCalcular **celdas;
+    CeldaCalculada **celdas_calculadas;
 };
 struct EstructuraArchivo
 {
