@@ -47,7 +47,7 @@ struct EstructuraArchivo
     char *nombre_archivo;
     int numero_hojas;
     EstructuraHoja *hojas_sin_calcular;
-    EstructuraInfoReporte reportes;
+    EstructuraInfoReporte reporte;
 };
 void imprimir(char* texto);
 char* getNombreArchivoHCalculo();
