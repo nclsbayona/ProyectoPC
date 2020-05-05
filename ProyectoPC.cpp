@@ -60,6 +60,7 @@ EstructuraHoja leerFilasColumnas(char * nombre_archivo, int numero_hoja);
 void leerCeldas(EstructuraArchivo  archivo);
 void calcularCeldas(EstructuraArchivo  archivo);
 void generarReportes(EstructuraArchivo archivo);
+void GenerarReportes(); //Aquí metemos todo el código luego de asegurarnos que funcione perfectamente
 int main()
 {
     try //Este bloque lo que hace es intentar unas sentencias, en caso de ocurrir una excepción, pasa al bloque catch
