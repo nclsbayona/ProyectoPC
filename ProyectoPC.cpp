@@ -57,7 +57,9 @@ bool textoVacio ( char* linea );
 int leerNumeroDeHojasDeCalculo (char* nombre_archivo);
 void imprimirLineas(char* nombre);
 EstructuraHoja leerFilasColumnas(char * nombre_archivo, int numero_hoja);
-CeldaSinCalcular **leerCeldas(EstructuraArchivo archivo , int numero_hoja);
+void leerCeldas(EstructuraArchivo  archivo);
+void calcularCeldas(EstructuraArchivo  archivo);
+void generarReportes(EstructuraArchivo archivo);
 int main()
 {
     try //Este bloque lo que hace es intentar unas sentencias, en caso de ocurrir una excepción, pasa al bloque catch
