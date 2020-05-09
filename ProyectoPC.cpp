@@ -19,7 +19,7 @@ struct EstructuraReporte
 struct EstructuraInfoReporte
 {
     //Info para el reporte
-    double numero_semanas; 
+    double numero_semanas;
     double unidades_producidas;
     double unidades_vendidas;
     double utilidad_operacional;
@@ -166,7 +166,7 @@ EstructuraHoja leerFilasColumnas(char * nombre_archivo, int numero_hoja)
                     archivoE.filas =atoi(puntero);
                 else throw 0; // Si hay algún fallo
                 ++*i;
-                puntero=strtok(NULL, " ");              
+                puntero=strtok(NULL, " ");
             }
             *i = 0;
             for ( int j = 1; j <= archivoE.filas; j++)//Paso a la siguiente hoja
@@ -191,7 +191,7 @@ EstructuraHoja leerFilasColumnas(char * nombre_archivo, int numero_hoja)
                 archivoE.filas =atoi(puntero);
             else throw 0; // Si hay algún fallo
             ++*i;
-            puntero=strtok(NULL, " ");              
+            puntero=strtok(NULL, " ");
         }
         delete puntero;
         delete i;
@@ -287,15 +287,15 @@ bool HojasCalculo()
 }
 void leerCeldas(EstructuraArchivo  archivoE)
 {
-    
+
 }
 void calcularCeldas(EstructuraArchivo  archivo)
 {
-    
+
 }
 void generarReportes(EstructuraArchivo archivo)
 {
-    
+    //Vamos a realizar los reportes de todo
 }
 char* getNombreArchivoInteresadosR()
 {
