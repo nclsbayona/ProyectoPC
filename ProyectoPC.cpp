@@ -296,6 +296,7 @@ void calcularCeldas(EstructuraArchivo  archivo)
 void generarReportes(EstructuraArchivo archivo)
 {
     //Vamos a realizar los reportes de todo
+    // This gonna be all right
 }
 char* getNombreArchivoInteresadosR()
 {
