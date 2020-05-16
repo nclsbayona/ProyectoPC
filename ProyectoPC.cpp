@@ -108,6 +108,9 @@ char* getNombreArchivoHCalculo()
         char*nombre = new char[TAM_MAX_NOMBRE_ARCHIVO+5];
         cout<<"Nombre del archivo que contiene las hojas de calculo: ";
         cin.getline(nombre, TAM_MAX_NOMBRE_ARCHIVO, '\n');
+        for(int i=0; i<(int)(strlen(nombre));i++)
+            if(nombre[i]==' ')
+                nombre[i]='_';
         char*txt = new char [5];
         strcpy(txt, ".txt");
         strcat(nombre, txt);
