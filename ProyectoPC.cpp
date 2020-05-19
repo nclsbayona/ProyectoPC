@@ -1,3 +1,9 @@
+/*Autores:
+- Nicolás Bayona
+- Pablo Bright
+- Nicolás García
+*/
+//None but our self can free our minds --Bob Marley
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
