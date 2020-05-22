@@ -47,7 +47,7 @@ struct EstructuraArchivo
 {
     char *nombre_archivo;
     int numero_hojas;
-    EstructuraHoja *hojas_sin_calcular;
+    EstructuraHoja* hojas_sin_calcular;
     EstructuraInfoReporte reporte;
 };
 bool HojasCalculo();
@@ -62,11 +62,20 @@ EstructuraHoja leerFilasColumnas(char * nombre_archivo, int numero_hoja);
 void leerCeldas(EstructuraArchivo  archivo);
 void calcularCeldas(EstructuraArchivo  archivo);
 void generarReportes(EstructuraArchivo archivo);
-char* getNombreArchivoInteresadosR();
+char* getNombreArchivoInteresadosR(char* palabra);
+void llenarDatosReporte(double& supIzq,double& infIzq,double& supDer,double& infDer,double& neta,EstructuraHoja* hoja);
+int comparaCadenas(char* cadena1, char* cadena2);
+int autorizaReporte(EstructuraReporte*& reporte); //Esta es la funcion getNombreArchivoInteresadosR pero retorna 0 o 1
+void espacioInfoReporte(EstructuraReporte*& reporte);
+void pruebaInfoReporte();
 int main()
 {
-   return HojasCalculo();
+    pruebaInfoReporte();
+
+   // return HojasCalculo();*/
 }
+
+
 bool archivoPuedeUsarse(char* nombre_archivo)
 {
     // Me dice si inicialmente el archivo parece apto o no
@@ -295,11 +304,215 @@ void calcularCeldas(EstructuraArchivo  archivo)
 }
 void generarReportes(EstructuraArchivo archivo)
 {
-    //Vamos a realizar los reportes de todo
-    // This gonna be all right
+    int numHoja=-1;
+    do
+    {
+        //Es importante señalar que es entre 0 y numero de hojas -1, la persona al realizarlo debe saber esto
+        cout<<"El archivo cuenta con "<<(archivo.numero_hojas-1)<<" hojas de calculo(inicia en 0) , ingrese sobre cual desea hacer el reporte :";
+        cin>>numHoja;
+        cin.ignore(1);
+    }while((numHoja>=archivo.numero_hojas)||(numHoja<0)); //Obtengo la hoja a la cual le haré indireccion para usar cada uno de sus elementos
+
+    double supIzq=0,infIzq=0,supDer=0,infDer=0,neta=0; //Definimos las variables que se registraran en el archivo
+
+    EstructuraHoja* hoja;
+    hoja=(archivo.hojas_sin_calcular+numHoja); //Esto se hace para manejar más facilmente las operaciones punteros
+    llenarDatosReporte(supIzq,infIzq,supDer,infDer,neta,hoja); //Lena cada una de los datos que se necesitan en el reporte
+    archivo.reporte.numero_semanas=supDer;
+    archivo.reporte.unidades_producidas=infDer;
+    archivo.reporte.unidades_vendidas=supIzq;
+    archivo.reporte.utilidad_operacional=infIzq;
+    archivo.reporte.utilidad_neta=neta;
+    //No se si inforeporte viene con espacio declarado, si es el caso dado se activa esta funcion
+    espacioInfoReporte(archivo.reporte.total_reportes);
+    if(autorizaReporte(archivo.reporte.total_reportes)==1)
+    {
+        ofstream salida;
+        salida.open(getNombreArchivoInteresadosR((archivo.reporte.total_reportes)->nombre_archivo),ios::out);
+        salida<<"Super Calculo S.A."<<endl;
+        salida<<(archivo.reporte.total_reportes)->nombre<<" "<<(archivo.reporte.total_reportes)->apellido<<endl;
+        salida<<(archivo.reporte.total_reportes)->ciudad<<endl<<endl;
+        salida<<"Despues de una analisis detallado de cada movimiento de efectivo realizado"<<endl;
+        salida<<"en la semana "<<supDer<<" se obtuvieron los siguientes datos :"<<endl<<endl;
+        salida<<'\t'<<"Unidades producidas: "<< infDer<<endl;
+        salida<<'\t'<<"Unidades vendidas: "<<supDer<<endl;
+        salida<<'\t'<<"Utilidad Operacional: "<<infIzq<<endl;
+        salida<<'\t'<<"Utilidad Neta: "<<neta<<endl<<endl;
+        salida<<"Cordial Saludo."<<endl<<endl;
+        salida<<"Departamento de Finanzas.";
+        salida.close();
+
+    }
+    else
+    {
+        cout<<"No puede realizar el reporte porque no se encuentra registrado";
+    }
+
+
+
 }
-char* getNombreArchivoInteresadosR()
+int autorizaReporte(EstructuraReporte*& reporte)
 {
-    char *palabra = new char;
-    return palabra;
+    ifstream entrada;
+    char *palabra = new char[20];
+    cout<<"Ingrese el nombre del archivo que desea buscar(No olvide la extension .txt) :";
+    cin.getline(palabra,20,'\n');
+    entrada.open(palabra,ios::in);
+    if(entrada.fail())
+    {
+        cout<<"Error al buscar el archivo";
+        return 0;
+    }
+    cout<<"Ingrese informacion del interesado en el reporte :";
+    cout<<endl<<"Nombre :";
+    cin.getline(reporte->nombre,20,'\n');
+    cout<<"Apellido :";
+    cin.getline(reporte->apellido,20,'\n');
+    cout<<"Ciudad :";
+    cin.getline(reporte->ciudad,20,'\n');
+    char* definitivo=new char[40];
+    strcpy(definitivo,reporte->nombre);
+    strcat(definitivo,reporte->apellido);
+    strcpy(reporte->nombre_archivo,definitivo);
+    char* linea=new char[100];
+    bool nombreCmp=false,apellidoCmp=false;
+    char* pch;
+    while(!entrada.eof())
+    {
+        cout<<"-";
+        entrada.getline(linea,100,'\n');
+        nombreCmp=false;
+        apellidoCmp=false;
+        pch=strtok(linea,", ");
+        if(comparaCadenas(pch,reporte->nombre)==0)
+        {
+            nombreCmp=true;
+        }
+        pch=strtok(NULL,", ");
+        if(comparaCadenas(pch,reporte->apellido)==0)
+        {
+            apellidoCmp=true;
+        }
+        if(nombreCmp==true&&apellidoCmp==true)
+        {
+            cout<<"Permitido hacer el registro"<<endl;
+            entrada.close();
+            return 1; //Esta registrado y puede generarse el archivo
+        }
+    }
+    delete definitivo;
+    delete pch;
+    delete linea;
+    entrada.close();
+    return 0;
+
 }
+int comparaCadenas(char* cadena1, char* cadena2)
+{ //Strcmp no funciono pero esta si
+    int n=strlen(cadena2);
+    bool done=true;
+    for(int i=0;i<n;i++)
+    {
+        if(*(cadena1)!=*(cadena2))
+            done=false;
+    }
+    if(done)
+    {
+        return 0;
+    }
+    else
+        return -1;
+}
+void espacioInfoReporte(EstructuraReporte*& reporte)
+{
+    reporte=new EstructuraReporte[1];
+    reporte->nombre=new char{20};
+    reporte->apellido=new char[20];
+    reporte->nombre_archivo=new char[20];
+    reporte->ciudad=new char[20];
+}
+void pruebaInfoReporte()
+{
+    //Esto es una prueba para ver que todo funciona correctamente
+    EstructuraArchivo archivo;
+    archivo.nombre_archivo=new char[20];
+    archivo.numero_hojas=2;
+    archivo.hojas_sin_calcular=new EstructuraHoja[2];
+    archivo.reporte;
+    strcpy(archivo.nombre_archivo,"Trial");
+    //hojas calculadas
+    (archivo.hojas_sin_calcular+0)->filas=3;
+    (archivo.hojas_sin_calcular+0)->columnas=3;
+    (archivo.hojas_sin_calcular+0)->celdas_calculadas=new CeldaCalculada*[3];
+    int k=1;
+    for(int i=0; i<3; i++)
+    {
+        ((archivo.hojas_sin_calcular)->celdas_calculadas)[i]=new CeldaCalculada[3];
+        for(int j=0; j<3; j++)
+        {
+            ((*(((archivo.hojas_sin_calcular)->celdas_calculadas)+i)+j))->dato=i*k;
+            k++;
+        }
+    }
+
+    (archivo.hojas_sin_calcular+1)->filas=5;
+    (archivo.hojas_sin_calcular+1)->columnas=5;
+    (archivo.hojas_sin_calcular+1)->celdas_calculadas=new CeldaCalculada*[5];
+    for(int i=0; i<5; i++)
+    {
+        ((archivo.hojas_sin_calcular+1)->celdas_calculadas)[i]=new CeldaCalculada[5];
+        for(int j=0; j<5; j++)
+        {
+            ((*(((archivo.hojas_sin_calcular+1)->celdas_calculadas)+i)+j))->dato=i*k;
+            k++;
+        }
+    }
+    generarReportes(archivo);
+}
+char* getNombreArchivoInteresadosR(char* palabra)
+{
+    char* extension=new char[5];
+    strcpy(extension,".txt");
+    char* nombre=new char[50];
+    strcpy(nombre,palabra);
+    strncat(nombre,extension,6);
+    delete extension;
+    return nombre;
+}
+void llenarDatosReporte(double& supIzq,double& infIzq,double& supDer,double& infDer,double& neta,EstructuraHoja* hoja)
+{
+    int f,c,filUti,colUti; //Definimos las filas y columas para realizar las validaciones del reporte
+
+    f=(hoja+0)->filas;
+    c=(hoja+0)->columnas;
+    filUti=f/2;
+    colUti=c/2;
+
+    for(int i=0; i<f; i++) //Vamos a sacar los elementos requeridos para realizar el informe
+    {
+        for(int j=0; j<c; j++)
+        {
+            if(i==0&&j==0)
+            {
+                supIzq=((*(((hoja+0)->celdas_calculadas)+i)+j))->dato;
+            }
+            if(i==f-1&&j==0)
+            {
+                infIzq=((*(((hoja+0)->celdas_calculadas)+i)+j))->dato;
+            }
+            if(i==0&&j==c-1)
+            {
+                supDer= ((*(((hoja+0)->celdas_calculadas)+i)+j))->dato;
+            }
+            if(i==f-1&&j==c-1)
+            {
+                infDer=((*(((hoja+0)->celdas_calculadas)+i)+j))->dato;
+            }
+            if(i==filUti&&j==colUti)
+            {
+                neta=((*(((hoja+0)->celdas_calculadas)+i)+j))->dato;
+            }
+        }
+    }
+}
+
