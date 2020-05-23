@@ -3,7 +3,7 @@
 - Pablo Bright
 - Nicolás García
 */
-//None but our self can free our minds --Bob Marley
+//None but ourselves can free our minds --Bob Marley
 #include <time.h>
 #include <stdlib.h>
 #include <iostream>
@@ -36,12 +36,12 @@ struct EstructuraInfoReporte
 };
 struct CeldaSinCalcular
 {
-    char *nombre; //A...Z,AA...ZZ,AAA...ZZZ
+    char *nombre; //A1...Z999,AA1...ZZ999,AAA1...ZZZ999
     char *dato; //Valor
 };
 struct CeldaCalculada
 {
-    char *nombre; //A...Z,AA...ZZ,AAA...ZZZ
+    char *nombre; //A1...Z999,AA1...ZZ999,AAA1...ZZZ999
     double dato;//Valor
 };
 struct EstructuraHoja
@@ -524,4 +524,3 @@ void llenarDatosReporte(double& supIzq,double& infIzq,double& supDer,double& inf
         }
     }
 }
-
