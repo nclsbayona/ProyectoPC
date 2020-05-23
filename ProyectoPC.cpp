@@ -4,6 +4,8 @@
 - Nicolás García
 */
 //None but our self can free our minds --Bob Marley
+#include <time.h>
+#include <stdlib.h>
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
@@ -442,6 +444,7 @@ void espacioInfoReporte(EstructuraReporte*& reporte)
 }
 void pruebaInfoReporte()
 {
+    srand(time(NULL));
     //Esto es una prueba para ver que todo funciona correctamente
     EstructuraArchivo archivo;
     archivo.nombre_archivo=new char[20];
@@ -453,14 +456,12 @@ void pruebaInfoReporte()
     (archivo.hojas_sin_calcular+0)->filas=3;
     (archivo.hojas_sin_calcular+0)->columnas=3;
     (archivo.hojas_sin_calcular+0)->celdas_calculadas=new CeldaCalculada*[3];
-    int k=1;
     for(int i=0; i<3; i++)
     {
         ((archivo.hojas_sin_calcular)->celdas_calculadas)[i]=new CeldaCalculada[3];
         for(int j=0; j<3; j++)
         {
-            ((*(((archivo.hojas_sin_calcular)->celdas_calculadas)+i)+j))->dato=i*k;
-            k++;
+            ((*(((archivo.hojas_sin_calcular)->celdas_calculadas)+i)+j))->dato=i*rand()%30;
         }
     }
 
@@ -472,8 +473,7 @@ void pruebaInfoReporte()
         ((archivo.hojas_sin_calcular+1)->celdas_calculadas)[i]=new CeldaCalculada[5];
         for(int j=0; j<5; j++)
         {
-            ((*(((archivo.hojas_sin_calcular+1)->celdas_calculadas)+i)+j))->dato=i*k;
-            k++;
+            ((*(((archivo.hojas_sin_calcular+1)->celdas_calculadas)+i)+j))->dato=i*rand()%30;
         }
     }
     generarReportes(archivo);
