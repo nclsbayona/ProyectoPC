@@ -385,7 +385,6 @@ bool autorizaReporte(EstructuraReporte*& reporte,int supDer,int infDer,int supIz
         salida<<"Cordial Saludo."<<endl<<endl;
         salida<<"Departamento de Finanzas.";
         salida.close();
-        cout<<"Termino"<<endl;
     }
 
     delete definitivo;;
