@@ -762,7 +762,8 @@ void generarReportes(EstructuraArchivo archivo)
     }while((numHoja>=archivo.numero_hojas)||(numHoja<0)); //Obtengo la hoja a la cual le haré indireccion para usar cada uno de sus elementos
 
     double supIzq=0,infIzq=0,supDer=0,infDer=0,neta=0; //Definimos las variables que se registraran en el archivo
-
+    //No se si inforeporte viene con espacio declarado, si es el caso dado se activa esta funcion
+    espacioInfoReporte(archivo.reporte.total_reportes);
     EstructuraHoja* hoja;
     hoja=(archivo.hojas_sin_calcular+numHoja); //Esto se hace para manejar más facilmente las operaciones punteros
     llenarDatosReporte(supIzq,infIzq,supDer,infDer,neta,hoja); //Lena cada una de los datos que se necesitan en el reporte
@@ -771,89 +772,65 @@ void generarReportes(EstructuraArchivo archivo)
     archivo.reporte.unidades_vendidas=supIzq;
     archivo.reporte.utilidad_operacional=infIzq;
     archivo.reporte.utilidad_neta=neta;
-    //No se si inforeporte viene con espacio declarado, si es el caso dado se activa esta funcion
-    espacioInfoReporte(archivo.reporte.total_reportes);
-    if(autorizaReporte(archivo.reporte.total_reportes)==1)
-    {
-        ofstream salida;
-        salida.open(getNombreArchivoInteresadosR((archivo.reporte.total_reportes)->nombre_archivo),ios::out);
-        salida<<"Super Calculo S.A."<<endl;
-        salida<<(archivo.reporte.total_reportes)->nombre<<" "<<(archivo.reporte.total_reportes)->apellido<<endl;
-        salida<<(archivo.reporte.total_reportes)->ciudad<<endl<<endl;
-        salida<<"Despues de una analisis detallado de cada movimiento de efectivo realizado"<<endl;
-        salida<<"en la semana "<<supDer<<" se obtuvieron los siguientes datos :"<<endl<<endl;
-        salida<<'\t'<<"Unidades producidas: "<< infDer<<endl;
-        salida<<'\t'<<"Unidades vendidas: "<<supDer<<endl;
-        salida<<'\t'<<"Utilidad Operacional: "<<infIzq<<endl;
-        salida<<'\t'<<"Utilidad Neta: "<<neta<<endl<<endl;
-        salida<<"Cordial Saludo."<<endl<<endl;
-        salida<<"Departamento de Finanzas.";
-        salida.close();
 
-    }
-    else
-    {
-        cout<<"No puede realizar el reporte porque no se encuentra registrado";
-    }
-
+    autorizaReporte(archivo.reporte.total_reportes,supDer,infDer,supIzq,infIzq,neta); //Imprime todos los reportes
 
 
 }
-int autorizaReporte(EstructuraReporte*& reporte)
+bool autorizaReporte(EstructuraReporte*& reporte,int supDer,int infDer,int supIzq,int infIzq,int neta)
 {
     ifstream entrada;
+    ofstream salida;
     char *palabra = new char[20];
-    cout<<"Ingrese el nombre del archivo que desea buscar(No olvide la extension .txt) :";
+    cout<<"Ingrese el nombre del archivo que desea buscar :";
     cin.getline(palabra,20,'\n');
-    entrada.open(palabra,ios::in);
+    entrada.open(getNombreArchivoInteresadosR(palabra),ios::in);
     if(entrada.fail())
     {
         cout<<"Error al buscar el archivo";
-        return 0;
+        return false;
     }
-    cout<<"Ingrese informacion del interesado en el reporte :";
-    cout<<endl<<"Nombre :";
-    cin.getline(reporte->nombre,20,'\n');
-    cout<<"Apellido :";
-    cin.getline(reporte->apellido,20,'\n');
-    cout<<"Ciudad :";
-    cin.getline(reporte->ciudad,20,'\n');
     char* definitivo=new char[40];
-    strcpy(definitivo,reporte->nombre);
-    strcat(definitivo,reporte->apellido);
-    strcpy(reporte->nombre_archivo,definitivo);
     char* linea=new char[100];
-    bool nombreCmp=false,apellidoCmp=false;
     char* pch;
-    while(!entrada.eof())
+    bool fin=false;
+    while(!entrada.eof()&&(!fin))
     {
-        cout<<"-";
         entrada.getline(linea,100,'\n');
-        nombreCmp=false;
-        apellidoCmp=false;
-        pch=strtok(linea,", ");
-        if(comparaCadenas(pch,reporte->nombre)==0)
+        if (textoVacio(linea))
+            fin=true;
+        else
         {
-            nombreCmp=true;
-        }
-        pch=strtok(NULL,", ");
-        if(comparaCadenas(pch,reporte->apellido)==0)
-        {
-            apellidoCmp=true;
-        }
-        if(nombreCmp==true&&apellidoCmp==true)
-        {
-            cout<<"Permitido hacer el registro"<<endl;
-            entrada.close();
-            return 1; //Esta registrado y puede generarse el archivo
+            cout<<"-";
+            pch=strtok(linea,", ");
+            strcpy(reporte->nombre,pch);
+            pch=strtok(NULL,", ");
+            strcpy(reporte->apellido,pch);
+            strcpy(definitivo,reporte->nombre);
+            strcat(definitivo,reporte->apellido);
+            strcpy(reporte->nombre_archivo,definitivo);
+            cout<<"Para "<<reporte->nombre<<" "<<reporte->apellido<<" ingrese la ciudad :";
+            cin.getline(reporte->ciudad,20,'\n');
+            //Llamar la funcion que genera archivo
+            salida.open(getNombreArchivoInteresadosR((reporte)->nombre_archivo),ios::out);
+            salida<<"Super Calculo S.A."<<endl;
+            salida<<(reporte)->nombre<<" "<<(reporte)->apellido<<endl;
+            salida<<(reporte)->ciudad<<endl<<endl;
+            salida<<"Despues de una analisis detallado de cada movimiento de efectivo realizado"<<endl;
+            salida<<"en la semana "<<supDer<<" se obtuvieron los siguientes datos :"<<endl<<endl;
+            salida<<'\t'<<"Unidades producidas: "<< infDer<<endl;
+            salida<<'\t'<<"Unidades vendidas: "<<supDer<<endl;
+            salida<<'\t'<<"Utilidad Operacional: "<<infIzq<<endl;
+            salida<<'\t'<<"Utilidad Neta: "<<neta<<endl<<endl;
+            salida<<"Cordial Saludo."<<endl<<endl;
+            salida<<"Departamento de Finanzas.";
+            salida.close();
         }
     }
-    delete definitivo;
-    delete pch;
+    delete definitivo;;
     delete linea;
     entrada.close();
-    return 0;
-
+    return true;
 }
 int comparaCadenas(char* cadena1, char* cadena2)
 { //Strcmp no funciono pero esta si
