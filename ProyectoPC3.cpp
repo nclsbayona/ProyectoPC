@@ -77,7 +77,7 @@ void generarReportes(EstructuraArchivo archivo);
 char* getNombreArchivoInteresadosR(char* palabra);
 void llenarDatosReporte(double& supIzq,double& infIzq,double& supDer,double& infDer,double& neta,EstructuraHoja* hoja);
 int comparaCadenas(char* cadena1, char* cadena2);
-int autorizaReporte(EstructuraReporte*& reporte); //Esta es la funcion getNombreArchivoInteresadosR pero retorna 0 o 1
+bool autorizaReporte(EstructuraReporte*& reporte,int supDer,int infDer,int supIzq,int infIzq,int neta);
 void espacioInfoReporte(EstructuraReporte*& reporte);
 void pruebaInfoReporte();
 void reverse(char str[], int length) ;
@@ -760,7 +760,7 @@ void generarReportes(EstructuraArchivo archivo)
         cin>>numHoja;
         cin.ignore(1);
     }while((numHoja>=archivo.numero_hojas)||(numHoja<0)); //Obtengo la hoja a la cual le haré indireccion para usar cada uno de sus elementos
-
+    imprimirHojaC(archivo.hojas_sin_calcular[numHoja]);
     double supIzq=0,infIzq=0,supDer=0,infDer=0,neta=0; //Definimos las variables que se registraran en el archivo
     //No se si inforeporte viene con espacio declarado, si es el caso dado se activa esta funcion
     espacioInfoReporte(archivo.reporte.total_reportes);
@@ -819,7 +819,7 @@ bool autorizaReporte(EstructuraReporte*& reporte,int supDer,int infDer,int supIz
             salida<<"Despues de una analisis detallado de cada movimiento de efectivo realizado"<<endl;
             salida<<"en la semana "<<supDer<<" se obtuvieron los siguientes datos :"<<endl<<endl;
             salida<<'\t'<<"Unidades producidas: "<< infDer<<endl;
-            salida<<'\t'<<"Unidades vendidas: "<<supDer<<endl;
+            salida<<'\t'<<"Unidades vendidas: "<<supIzq<<endl;
             salida<<'\t'<<"Utilidad Operacional: "<<infIzq<<endl;
             salida<<'\t'<<"Utilidad Neta: "<<neta<<endl<<endl;
             salida<<"Cordial Saludo."<<endl<<endl;
