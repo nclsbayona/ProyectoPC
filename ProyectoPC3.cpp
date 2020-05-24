@@ -760,6 +760,7 @@ void generarReportes(EstructuraArchivo archivo)
         cin>>numHoja;
         cin.ignore(1);
     }while((numHoja>=archivo.numero_hojas)||(numHoja<0)); //Obtengo la hoja a la cual le haré indireccion para usar cada uno de sus elementos
+    //imprimirHojaC(archivo.hojas_sin_calcular[numHoja]);
     double supIzq=0,infIzq=0,supDer=0,infDer=0,neta=0; //Definimos las variables que se registraran en el archivo
     //No se si inforeporte viene con espacio declarado, si es el caso dado se activa esta funcion
     espacioInfoReporte(archivo.reporte.total_reportes);
