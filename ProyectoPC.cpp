@@ -356,42 +356,44 @@ bool autorizaReporte(EstructuraReporte*& reporte,int supDer,int infDer,int supIz
     char* definitivo=new char[40];
     char* linea=new char[100];
     char* pch;
-
-    while(!entrada.eof())
+    bool fin=false;
+    while(!entrada.eof()&&(!fin))
     {
-        cout<<"-";
         entrada.getline(linea,100,'\n');
-        pch=strtok(linea,", ");
-        strcpy(reporte->nombre,pch);
-        pch=strtok(NULL,", ");
-        strcpy(reporte->apellido,pch);
-        strcpy(definitivo,reporte->nombre);
-        strcat(definitivo,reporte->apellido);
-        strcpy(reporte->nombre_archivo,definitivo);
-        cout<<"Para "<<reporte->nombre<<" "<<reporte->apellido<<" ingrese la ciudad :";
-        cin.getline(reporte->ciudad,20,'\n');
-        //Llamar la funcion que genera archivo
-
-        salida.open(getNombreArchivoInteresadosR((reporte)->nombre_archivo),ios::app);
-        salida<<"Super Calculo S.A."<<endl;
-        salida<<(reporte)->nombre<<" "<<(reporte)->apellido<<endl;
-        salida<<(reporte)->ciudad<<endl<<endl;
-        salida<<"Despues de una analisis detallado de cada movimiento de efectivo realizado"<<endl;
-        salida<<"en la semana "<<supDer<<" se obtuvieron los siguientes datos :"<<endl<<endl;
-        salida<<'\t'<<"Unidades producidas: "<< infDer<<endl;
-        salida<<'\t'<<"Unidades vendidas: "<<supDer<<endl;
-        salida<<'\t'<<"Utilidad Operacional: "<<infIzq<<endl;
-        salida<<'\t'<<"Utilidad Neta: "<<neta<<endl<<endl;
-        salida<<"Cordial Saludo."<<endl<<endl;
-        salida<<"Departamento de Finanzas.";
-        salida.close();
+        if (textoVacio(linea))
+            fin=true;
+        else
+        {
+            cout<<"-";
+            pch=strtok(linea,", ");
+            strcpy(reporte->nombre,pch);
+            pch=strtok(NULL,", ");
+            strcpy(reporte->apellido,pch);
+            strcpy(definitivo,reporte->nombre);
+            strcat(definitivo,reporte->apellido);
+            strcpy(reporte->nombre_archivo,definitivo);
+            cout<<"Para "<<reporte->nombre<<" "<<reporte->apellido<<" ingrese la ciudad :";
+            cin.getline(reporte->ciudad,20,'\n');
+            //Llamar la funcion que genera archivo
+            salida.open(getNombreArchivoInteresadosR((reporte)->nombre_archivo),ios::out);
+            salida<<"Super Calculo S.A."<<endl;
+            salida<<(reporte)->nombre<<" "<<(reporte)->apellido<<endl;
+            salida<<(reporte)->ciudad<<endl<<endl;
+            salida<<"Despues de una analisis detallado de cada movimiento de efectivo realizado"<<endl;
+            salida<<"en la semana "<<supDer<<" se obtuvieron los siguientes datos :"<<endl<<endl;
+            salida<<'\t'<<"Unidades producidas: "<< infDer<<endl;
+            salida<<'\t'<<"Unidades vendidas: "<<supDer<<endl;
+            salida<<'\t'<<"Utilidad Operacional: "<<infIzq<<endl;
+            salida<<'\t'<<"Utilidad Neta: "<<neta<<endl<<endl;
+            salida<<"Cordial Saludo."<<endl<<endl;
+            salida<<"Departamento de Finanzas.";
+            salida.close();
+        }
     }
-
     delete definitivo;;
     delete linea;
     entrada.close();
     return true;
-
 }
 int comparaCadenas(char* cadena1, char* cadena2)
 { //Strcmp no funciono pero esta si
